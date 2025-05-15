@@ -42,7 +42,7 @@ Created key pair named `vprofile-prod-key` for SSH access to instances.
 **AMI**: Amazon Linux
 
 #### 🧾 User Data:
-\`\`\`bash
+```bash
 #!/bin/bash
 DATABASE_PASS='admin123'
 sudo dnf update -y
@@ -51,16 +51,16 @@ sudo systemctl start mariadb
 sudo systemctl enable mariadb
 cd /tmp/
 git clone -b awsliftandshift https://github.com/hkhcoder/vprofile-project.git
-\`\`\`
+```
 
 #### 🛡️ Manual Configuration:
-\`\`\`bash
+```bash
 sudo mysqladmin -u root password "$DATABASE_PASS"
 sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User='';"
 sudo mysql -u root -p"$DATABASE_PASS" -e "CREATE DATABASE accounts;"
 sudo mysql -u root -p"$DATABASE_PASS" -e "GRANT ALL PRIVILEGES ON accounts.* TO 'admin'@'%' IDENTIFIED BY 'admin123';"
 sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vprofile-project/src/main/resources/db_backup.sql
-\`\`\`
+```
 
 ---
 
@@ -69,14 +69,14 @@ sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vprofile-project/src/main/
 **AMI**: Amazon Linux
 
 #### 🧾 User Data:
-\`\`\`bash
+```bash
 #!/bin/bash
 sudo dnf install memcached -y
 sudo systemctl start memcached
 sudo systemctl enable memcached
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/sysconfig/memcached
 sudo systemctl restart memcached
-\`\`\`
+```
 
 ---
 
@@ -85,9 +85,8 @@ sudo systemctl restart memcached
 **AMI**: Amazon Linux
 
 #### 🧾 User Data:
-\`\`\`bash
+```bash
 #!/bin/bash
-# Import keys and repos
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-erlang.E495BB49CC4BBE5B.key'
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/cloudsmith.rabbitmq-server.9F4587F226208342.key'
@@ -101,7 +100,7 @@ rabbitmqctl add_user test test
 rabbitmqctl set_user_tags test administrator
 rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
 systemctl restart rabbitmq-server
-\`\`\`
+```
 
 ---
 
@@ -110,11 +109,11 @@ systemctl restart rabbitmq-server
 **AMI**: Ubuntu
 
 #### 🧾 User Data:
-\`\`\`bash
+```bash
 #!/bin/bash
 sudo apt update && sudo apt upgrade -y
 sudo apt install openjdk-17-jdk tomcat10 git -y
-\`\`\`
+```
 
 ---
 
@@ -127,9 +126,9 @@ sudo apt install openjdk-17-jdk tomcat10 git -y
   - `memc.stackshift.com`
   - `app.stackshift.com`
 - Verified DNS resolution using:
-\`\`\`bash
+```bash
 ping -c 4 db.stackshift.com
-\`\`\`
+```
 
 ---
 
@@ -147,10 +146,10 @@ ping -c 4 db.stackshift.com
 - Uploaded to S3 bucket: `stackshift-artifacts`
 
 #### On `app-stackshift` EC2:
-\`\`\`bash
+```bash
 sudo apt install awscli -y
 aws s3 cp s3://stackshift-artifacts/vprofile-v2.war /var/lib/tomcat10/webapps/
-\`\`\`
+```
 
 ---
 
@@ -159,9 +158,9 @@ aws s3 cp s3://stackshift-artifacts/vprofile-v2.war /var/lib/tomcat10/webapps/
 - Created Application Load Balancer: `stackshift-elb`
 - Spanned across AZs: `us-east-1a` to `us-east-1f`
 - Verified access via browser:
-\`\`\`
+```
 http://stackshift-elb-1325834005.us-east-1.elb.amazonaws.com
-\`\`\`
+```
 
 ---
 
