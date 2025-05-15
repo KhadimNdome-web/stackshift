@@ -57,10 +57,13 @@ sudo mysql -u root -p"$DATABASE_PASS" -e "CREATE DATABASE accounts;"
 sudo mysql -u root -p"$DATABASE_PASS" -e "GRANT ALL PRIVILEGES ON accounts.* TO 'admin'@'%' IDENTIFIED BY 'admin123';"
 sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vprofile-project/src/main/resources/db_backup.sql
 
-4. Memcached Instance Setup (memc-stackshift)
+---
 
-AMI: Amazon Linux
-User Data:
+### 4. Memcached Instance Setup (memc-stackshift)
+
+**AMI**: Amazon Linux
+**User Data**:
+
 #!/bin/bash
 sudo dnf install memcached -y
 sudo systemctl start memcached
@@ -68,10 +71,12 @@ sudo systemctl enable memcached
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/sysconfig/memcached
 sudo systemctl restart memcached
 
-5. RabbitMQ Instance Setup (rmq-stackshift)
+---
 
-AMI: Amazon Linux
-User Data:
+### 5. RabbitMQ Instance Setup (rmq-stackshift)
+
+**AMI**: Amazon Linux
+**User Data**:
 #!/bin/bash
 # Import keys and repos
 rpm --import 'https://github.com/rabbitmq/signing-keys/...'
@@ -86,6 +91,8 @@ rabbitmqctl set_user_tags test administrator
 rabbitmqctl set_permissions -p / test ".*" ".*" ".*"
 systemctl restart rabbitmq-server
 
+---
+
 6. Tomcat (App) Instance Setup (app-stackshift)
 
 AMI: Ubuntu
@@ -94,17 +101,23 @@ User Data:
 sudo apt update && sudo apt upgrade -y
 sudo apt install openjdk-17-jdk tomcat10 git -y
 
+---
+
 7. Route 53 Private DNS Configuration
 
 - Created Private Hosted Zone: stackshift.com
 - Records created for: db.stackshift.com, rmq.stackshift.com, memc.stackshift.com, app.stackshift.com
 - Verified resolution via SSH and ping tests from app instance.
 
+---
+
 8. S3 Artifact Storage
 
 - Created bucket: stackshift-artifacts
 - Created IAM User: stackshift-s3-Khadim and Access Key
 - Created IAM Role: s3-Khadim and attached to app-stackshift EC2 instance
+
+---
 
 9. Artifact Build & Deployment
 
@@ -118,11 +131,15 @@ sudo apt install awscli -y
 # Fetch artifact
 aws s3 cp s3://stackshift-artifacts/vprofile-v2.war /var/lib/tomcat10/webapps/
 
+---
+
 10. Load Balancer Setup
 
 - Created Application Load Balancer: stackshift-elb
 - Targeted multiple availability zones (us-east-1a to us-east-1f)
 - DNS: stackshift-elb-1325834005.us-east-1.elb.amazonaws.com
+
+---
 
 11. 📈 Auto Scaling Configuration
 - Created AMI from app-stackshift
@@ -130,6 +147,8 @@ aws s3 cp s3://stackshift-artifacts/vprofile-v2.war /var/lib/tomcat10/webapps/
 - Created Auto Scaling Group: stackshift-app-asg
 - Max Instances: 4
 - Scaling Policy: CPU > 50%
+
+---
 
 Summary:
 
