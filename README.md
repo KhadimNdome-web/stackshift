@@ -4,9 +4,9 @@
 
 ---
 
-## 📦 Stack Overview
+##  Stack Overview
 
-### ✅ Services Used
+###  Services Used
 - **EC2 Instances**: Tomcat, RabbitMQ, Memcached, MySQL
 - **ELB (Elastic Load Balancer)**: Replaces traditional NGINX load balancer
 - **Auto Scaling**: Dynamically scales EC2 instances
@@ -15,9 +15,9 @@
 
 ---
 
-## 🚀 Project Workflow
+##  Project Workflow
 
-### 1. 🔐 Security Group Configuration
+### 1.  Security Group Configuration
 
 - **`vprofile-ELB-SG`** (Load Balancer)
   - Inbound: HTTP (80), HTTPS (443) from Anywhere (IPv4/IPv6)
@@ -31,17 +31,17 @@
 
 ---
 
-### 2. 🔑 Key Pair Creation
+### 2.  Key Pair Creation
 
 Created key pair named `vprofile-prod-key` for SSH access to instances.
 
 ---
 
-### 3. 🛠 MySQL Instance Setup (`vprofile-db01`)
+### 3.  MySQL Instance Setup (`vprofile-db01`)
 
 **AMI**: Amazon Linux
 
-#### 🧾 User Data:
+####  User Data:
 ```bash
 #!/bin/bash
 DATABASE_PASS='admin123'
@@ -53,7 +53,7 @@ cd /tmp/
 git clone -b awsliftandshift https://github.com/hkhcoder/vprofile-project.git
 ```
 
-#### 🛡️ Manual Configuration:
+####  Manual Configuration:
 ```bash
 sudo mysqladmin -u root password "$DATABASE_PASS"
 sudo mysql -u root -p"$DATABASE_PASS" -e "DELETE FROM mysql.user WHERE User='';"
@@ -64,11 +64,11 @@ sudo mysql -u root -p"$DATABASE_PASS" accounts < /tmp/vprofile-project/src/main/
 
 ---
 
-### 4. 💾 Memcached Instance Setup (`memc-stackshift`)
+### 4. Memcached Instance Setup (`memc-stackshift`)
 
 **AMI**: Amazon Linux
 
-#### 🧾 User Data:
+#### User Data:
 ```bash
 #!/bin/bash
 sudo dnf install memcached -y
@@ -80,11 +80,11 @@ sudo systemctl restart memcached
 
 ---
 
-### 5. 📩 RabbitMQ Instance Setup (`rmq-stackshift`)
+### 5. RabbitMQ Instance Setup (`rmq-stackshift`)
 
 **AMI**: Amazon Linux
 
-#### 🧾 User Data:
+#### User Data:
 ```bash
 #!/bin/bash
 rpm --import 'https://github.com/rabbitmq/signing-keys/releases/download/3.0/rabbitmq-release-signing-key.asc'
@@ -104,11 +104,11 @@ systemctl restart rabbitmq-server
 
 ---
 
-### 6. 🧩 Tomcat (App) Instance Setup (`app-stackshift`)
+### 6. Tomcat (App) Instance Setup (`app-stackshift`)
 
 **AMI**: Ubuntu
 
-#### 🧾 User Data:
+#### User Data:
 ```bash
 #!/bin/bash
 sudo apt update && sudo apt upgrade -y
@@ -117,7 +117,7 @@ sudo apt install openjdk-17-jdk tomcat10 git -y
 
 ---
 
-### 7. 🧭 Route 53 Private DNS Configuration
+### 7. Route 53 Private DNS Configuration
 
 - Created Private Hosted Zone: `stackshift.com`
 - Created records for:
@@ -132,7 +132,7 @@ ping -c 4 db.stackshift.com
 
 ---
 
-### 8. 🪣 S3 Artifact Storage
+### 8. S3 Artifact Storage
 
 - Created bucket: `stackshift-artifacts`
 - Created IAM User: `stackshift-s3-Khadim` with access keys
@@ -140,7 +140,7 @@ ping -c 4 db.stackshift.com
 
 ---
 
-### 9. 📦 Artifact Build & Deployment
+### 9. Artifact Build & Deployment
 
 - Built `.war` file using Maven: `vprofile-v2.war`
 - Uploaded to S3 bucket: `stackshift-artifacts`
@@ -153,7 +153,7 @@ aws s3 cp s3://stackshift-artifacts/vprofile-v2.war /var/lib/tomcat10/webapps/
 
 ---
 
-### 10. 🌐 Load Balancer Setup
+### 10. Load Balancer Setup
 
 - Created Application Load Balancer: `stackshift-elb`
 - Spanned across AZs: `us-east-1a` to `us-east-1f`
@@ -164,7 +164,7 @@ http://stackshift-elb-1325834005.us-east-1.elb.amazonaws.com
 
 ---
 
-### 11. 📈 Auto Scaling Configuration
+### 11. Auto Scaling Configuration
 
 - Created AMI from `app-stackshift`
 - Created Launch Template using the AMI
@@ -174,9 +174,9 @@ http://stackshift-elb-1325834005.us-east-1.elb.amazonaws.com
 
 ---
 
-## ✅ Summary
+## Summary
 
-### 📌 Key Takeaways
+### Key Takeaways
 - Migrated a multi-tier app to AWS using EC2, ELB, and Auto Scaling
 - Automated infrastructure setup via User Data scripts
 - Configured internal DNS resolution with Route 53
@@ -184,20 +184,18 @@ http://stackshift-elb-1325834005.us-east-1.elb.amazonaws.com
 
 ---
 
-### 🔐 IAM Best Practices
+### IAM Best Practices
 
 - Used IAM Roles instead of Access Keys for EC2
 - Applied least privilege principle to all users and roles
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Khadim**  
 DevOps Engineer | AWS Enthusiast
 
 ---
 
-## 📜 License
 
-This project is licensed under the MIT License.
